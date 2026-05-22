@@ -7,6 +7,9 @@ AI 驱动开发 harness
 
 如果你觉得完整的 harness / GSD / superpower 工作流太重，或者平时主要靠 vibe coding 推进项目，但又希望项目能留下健康、可延续的文档和任务记录，`ai-driven-skills` 就是为这个场景准备的。
 
+详细技术细节：
+https://github.com/Tecinno4/ai-driven-skills/blob/main/TECHNICAL-DETAILS.md
+
 ## 它适合谁
 
 - 想用 Claude Code 快速启动一个新项目的人。
