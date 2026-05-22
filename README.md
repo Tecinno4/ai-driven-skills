@@ -1,14 +1,11 @@
 # ai-driven-skills
-AI 驱动开发 harness
 
-面向 [Claude Code](https://claude.com/claude-code) 的 AI 驱动增量开发 Skills。
+面向 [Claude Code](https://claude.com/claude-code) 的轻量级 AI 驱动开发 harness。
 
-它不是一个完全自动化的代码生成器，而是一套轻量的开发编排流程：让 Claude 在每次开发前先理解需求、沉淀文档、生成验证方案，再一步步协助你完成实现、测试、审查和归档。
+它通过一组 Skills 引导 Claude 理解需求、沉淀文档、规划任务并协助实现，让新手不用理解复杂流程，也能快速启动新项目或持续维护老项目。也支持构建你自己的定制化的harness。
 
 如果你觉得完整的 harness / GSD / superpower 工作流太重，或者平时主要靠 vibe coding 推进项目，但又希望项目能留下健康、可延续的文档和任务记录，`ai-driven-skills` 就是为这个场景准备的。
 
-详细技术细节：
-https://github.com/Tecinno4/ai-driven-skills/blob/main/TECHNICAL-DETAILS.md
 
 ## 它适合谁
 
@@ -31,11 +28,11 @@ https://github.com/Tecinno4/ai-driven-skills/blob/main/TECHNICAL-DETAILS.md
 
 ## 安装
 
-需要先安装 [Claude Code](https://claude.com/claude-code) 和 Node.js 14+。
+需要先安装 [Claude Code](https://claude.com/claude-code) 和 Node.js 14+。下面的安装命令使用 `npx`，它是 npm 自带的包执行方式，可以直接运行最新版本而不需要先全局安装。
 
 全局安装，推荐大多数用户使用：
 
-```bash
+```
 npx ai-driven-skills@latest install
 ```
 
@@ -43,13 +40,13 @@ npx ai-driven-skills@latest install
 
 如果只想安装到当前项目：
 
-```bash
+```
 npx ai-driven-skills@latest install --project
 ```
 
 常用安装命令：
 
-```bash
+```
 npx ai-driven-skills@latest list
 npx ai-driven-skills@latest install -f
 npx ai-driven-skills@latest uninstall
@@ -60,7 +57,7 @@ npx ai-driven-skills@latest help
 
 在你的项目里打开 Claude Code，然后按这个顺序使用：
 
-```bash
+```
 # 1. 初始化项目文档和路线图
 /ads-init
 
@@ -73,13 +70,19 @@ npx ai-driven-skills@latest help
 
 如果你已经通过普通对话写了一些代码，后来才想补上 ADS 记录，可以运行：
 
-```bash
+```
 /ads-record
+```
+
+如果你想基于这套思路做自己的 harness，而不是持续修改 `ai-driven-skills`，可以运行：
+
+```
+/ads-new-harness
 ```
 
 ## 命令一览
 
-默认安装 5 个稳定命令：
+默认安装 6 个稳定命令：
 
 | 命令 | 什么时候用 | 做什么 |
 |---|---|---|
@@ -87,6 +90,7 @@ npx ai-driven-skills@latest help
 | `/ads-next` | 想继续推进一个任务时 | 选择或发现下一个任务，生成 PRD 和测试计划，和用户对齐后进入 TDD，实现、验证、审查、归档 |
 | `/ads-record` | 已经临时开发了一些内容，但没走 `/ads-next` 时 | 根据现有对话和代码变更，补生成任务记录、需求、测试计划、变更说明和报告 |
 | `/ads-report` | 想知道项目现在到哪一步时 | 只读打印项目状态、当前任务、阻塞点和最近记录 |
+| `/ads-new-harness` | 想创建自己的 AI 开发 harness 时 | 先讲清楚本插件原理，再访谈定制需求，默认生成类似本项目的 npm skill package |
 | `/ads-help` | 忘记命令怎么用时 | 显示中文帮助 |
 
 ## 推荐工作流
@@ -109,6 +113,10 @@ npx ai-driven-skills@latest help
 
 它会把已经发生的工作补录成 ADS 任务记录，但不会假装这些内容是事前规划过的。缺少验证或不确定的地方会标记为 `needs-review`。
 
+### 创建自己的 harness
+
+如果你发现自己想不断调整 `ai-driven-skills` 的流程，说明你可能需要一个自己的 harness。运行 `/ads-new-harness` 后，它会先用白话解释本插件的核心原理：流程编排、子 agent 降低上下文开销、文档落盘、质量门禁和可调试性。然后它会追问你的定制需求，帮你设计命令、状态文件、子 agent 和停止条件。用户没有指定技术形态时，默认生成一个和本项目类似的 npm 包。
+
 ## `/ads-next` 的优势
 
 `/ads-next` 是这个项目的核心命令。
@@ -118,9 +126,9 @@ npx ai-driven-skills@latest help
 1. 先读项目状态和历史文档。
 2. 选择下一个任务，或在路线图为空时引导你发现新需求。
 3. 追问需求细节，生成当前任务的 PRD。
-4. 先生成测试和验证计划，让你确认模型理解是否正确。
+4. 由测试规划 agent 先生成中文测试计划、对齐测试覆盖，并初始化报告里的测试报告模板。
 5. 再进入实现、测试、验证和审查。
-6. 完成后归档任务，把重要上下文写回 `STATE.md`。
+6. 完成后按统一模板归档任务，把重要上下文写回 `STATE.md`。
 
 这样下次即使你打开一个全新的 Claude Code 窗口，也可以从项目文档继续，而不是重新解释整个项目。
 
@@ -141,8 +149,8 @@ your-project/
     └── tasks/
         └── 001-feature-example/
             ├── PRD.md
-            ├── test-plan.md
-            ├── report.md
+            ├── test-plan.md      # 中文测试计划
+            ├── report.md         # Step 2 初始化模板，归档时补结果
             └── CHANGES.md
 ```
 
@@ -177,19 +185,19 @@ your-project/
 
 克隆仓库后，可以直接安装当前 checkout 的版本：
 
-```bash
+```
 node bin/cli.js install -f
 ```
 
 安装到当前项目：
 
-```bash
+```
 node bin/cli.js install --project -f
 ```
 
 查看 CLI 帮助：
 
-```bash
+```
 node bin/cli.js help
 ```
 
